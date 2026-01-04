@@ -1,0 +1,26 @@
+spring:
+  application:
+    name: ms-sp-antifraud-rules
+
+  cloud:
+    stream:
+      kafka:
+        binder:
+          brokers: localhost:9092
+
+server:
+  port: 8082
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+  endpoint:
+    health:
+      show-details: always
+
+logging:
+  level:
+    pe.com.yape.ms.antifraud: INFO
+
