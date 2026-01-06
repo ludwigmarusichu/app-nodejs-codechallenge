@@ -1,6 +1,18 @@
 package pe.com.yape.ms.transaction.model.entity;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EntityListeners;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Index;
+import jakarta.persistence.Table;
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.util.UUID;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -11,23 +23,14 @@ import pe.com.yape.ms.transaction.model.domain.Transaction;
 import pe.com.yape.ms.transaction.model.domain.TransactionStatus;
 import pe.com.yape.ms.transaction.model.domain.TransactionType;
 
-import java.math.BigDecimal;
-import java.time.LocalDateTime;
-import java.util.UUID;
-
 /**
  * Entidad JPA para persistencia de transacciones
- * Adaptador entre el dominio (Transaction Record) y la base de datos
- * 
- * @author Yape Engineering Team
+ *
+ * @author lmarusic
  * @version 1.0.0
  */
 @Entity
-@Table(name = "transactions", indexes = {
-    @Index(name = "idx_transaction_external_id", columnList = "transaction_external_id"),
-    @Index(name = "idx_transaction_status", columnList = "status"),
-    @Index(name = "idx_transaction_created_at", columnList = "created_at")
-})
+@Table(name = "transactions")
 @EntityListeners(AuditingEntityListener.class)
 @Data
 @NoArgsConstructor

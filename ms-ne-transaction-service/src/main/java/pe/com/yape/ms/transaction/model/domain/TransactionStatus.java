@@ -3,7 +3,7 @@ package pe.com.yape.ms.transaction.model.domain;
 /**
  * Estado de una transacción en el sistema
  * 
- * @author Yape Engineering Team
+ * @author lmarusic
  * @version 1.0.0
  */
 public enum TransactionStatus {

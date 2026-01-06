@@ -5,10 +5,9 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 /**
- * Modelo de dominio inmutable que representa una transacción financiera
- * Usa Java 21 Record para inmutabilidad y expresividad
+ * Modelo de dominio que representa una transacción financiera
  * 
- * @author Yape Engineering Team
+ * @author lmarusic
  * @version 1.0.0
  */
 public record Transaction(
@@ -22,9 +21,6 @@ public record Transaction(
     LocalDateTime updatedAt
 ) {
     
-    /**
-     * Constructor compacto con validaciones de negocio
-     */
     public Transaction {
         if (transactionExternalId == null) {
             throw new IllegalArgumentException("Transaction external ID cannot be null");
@@ -49,9 +45,6 @@ public record Transaction(
         }
     }
     
-    /**
-     * Factory method para crear una nueva transacción en estado PENDING
-     */
     public static Transaction createPending(
             UUID accountExternalIdDebit,
             UUID accountExternalIdCredit,
@@ -71,10 +64,6 @@ public record Transaction(
         );
     }
     
-    /**
-     * Crea una nueva transacción con el estado actualizado
-     * Patrón inmutable: retorna nueva instancia en lugar de modificar
-     */
     public Transaction withStatus(TransactionStatus newStatus) {
         return new Transaction(
             this.transactionExternalId,

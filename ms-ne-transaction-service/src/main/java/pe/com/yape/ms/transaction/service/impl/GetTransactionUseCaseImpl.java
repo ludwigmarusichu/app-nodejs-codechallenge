@@ -25,20 +25,18 @@ public class GetTransactionUseCaseImpl implements GetTransactionUseCase {
     private final TransactionRepositoryPort transactionRepository;
     private final CacheRepositoryPort cacheRepository;
     
-    private static final long CACHE_TTL_SECONDS = 3600L; // 1 hora
+    private static final long CACHE_TTL_SECONDS = 3600L;
     
     @Override
     @Transactional(readOnly = true)
     public Transaction execute(UUID transactionExternalId) {
         log.debug("Getting transaction: {}", transactionExternalId);
         
-        // 1. Buscar en cache (Redis) - Fast path
         return cacheRepository.findByExternalId(transactionExternalId)
                 .map(transaction -> {
                     log.info("Transaction found in cache: {}", transactionExternalId);
                     return transaction;
                 })
-                // 2. Si no está en cache, buscar en BD - Slow path
                 .orElseGet(() -> {
                     log.debug("Transaction not in cache, searching in database: {}", transactionExternalId);
                     
@@ -49,10 +47,8 @@ public class GetTransactionUseCaseImpl implements GetTransactionUseCase {
                                 return new TransactionNotFoundException(transactionExternalId);
                             });
                     
-                    // 3. Guardar en cache para futuras consultas
                     cacheRepository.save(transaction, CACHE_TTL_SECONDS);
-                    log.info("Transaction found in database and cached: {}", transactionExternalId);
-                    
+                    log.info("Transaction found in database and saved in cache: {}", transactionExternalId);
                     return transaction;
                 });
     }

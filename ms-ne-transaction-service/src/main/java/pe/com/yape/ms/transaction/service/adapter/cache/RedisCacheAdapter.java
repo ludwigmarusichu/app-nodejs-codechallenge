@@ -1,6 +1,7 @@
 package pe.com.yape.ms.transaction.service.adapter.cache;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import java.time.Duration;
@@ -15,9 +16,7 @@ import pe.com.yape.ms.transaction.service.port.CacheRepositoryPort;
 
 /**
  * Adaptador de Cache implementada en Redis
- *
  * @author lmarusic
- * @version 1.0.0
  */
 @Component
 @RequiredArgsConstructor
@@ -25,7 +24,9 @@ import pe.com.yape.ms.transaction.service.port.CacheRepositoryPort;
 public class RedisCacheAdapter implements CacheRepositoryPort {
     
     private final RedisTemplate<String, String> redisTemplate;
-    private final ObjectMapper objectMapper = new ObjectMapper().registerModule(new JavaTimeModule());
+    private final ObjectMapper objectMapper = new ObjectMapper()
+            .registerModule(new JavaTimeModule())
+            .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
     
     private static final String CACHE_PREFIX = "transaction:";
     
@@ -58,7 +59,10 @@ public class RedisCacheAdapter implements CacheRepositoryPort {
             log.debug("Cache hit for transaction: {}", transactionExternalId);
             return Optional.of(transaction);
         } catch (JsonProcessingException e) {
-            log.error("Error deserializing transaction from cache: {}", transactionExternalId, e);
+            log.warn("Error deserializing transaction from cache: {}. Evicting corrupted cache entry.", 
+                transactionExternalId, e);
+            // Eliminar el cache corrupto automáticamente
+            evict(transactionExternalId);
             return Optional.empty();
         }
     }

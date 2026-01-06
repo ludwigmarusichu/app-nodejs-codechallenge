@@ -14,24 +14,41 @@ import java.util.concurrent.TimeoutException;
 
 /**
  * Manejador global de excepciones para el ms
- * 
  * @author lmarusic
- * @version 1.0.0
  */
 @RestControllerAdvice
 @Slf4j
 public class GlobalExceptionHandler {
+    
+    @ExceptionHandler(TransactionNotFoundException.class)
+    public Mono<ResponseEntity<ErrorResponse>> handleTransactionNotFoundException(
+            TransactionNotFoundException ex,
+            ServerWebExchange exchange
+    ) {
+        log.info("Transaction not found: {}", ex.getTransactionId());
+        
+        ErrorResponse error = ErrorResponse.builder()
+                .status(HttpStatus.NOT_FOUND.value())
+                .message(ex.getMessage())
+                .path(exchange.getRequest().getPath().value())
+                .timestamp(LocalDateTime.now())
+                .build();
+        
+        return Mono.just(ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .body(error));
+    }
     
     @ExceptionHandler(TransactionServiceException.class)
     public Mono<ResponseEntity<ErrorResponse>> handleTransactionServiceException(
             TransactionServiceException ex,
             ServerWebExchange exchange
     ) {
-        log.error("Transaction service error", ex);
+        log.error("Transaction service error: {}", ex.getMessage());
         
         ErrorResponse error = ErrorResponse.builder()
                 .status(HttpStatus.BAD_GATEWAY.value())
-                .message("Error communicating with transaction service: " + ex.getMessage())
+                .message("Error communicating with transaction service")
                 .path(exchange.getRequest().getPath().value())
                 .timestamp(LocalDateTime.now())
                 .build();
@@ -46,11 +63,11 @@ public class GlobalExceptionHandler {
             TimeoutException ex,
             ServerWebExchange exchange
     ) {
-        log.error("Timeout error", ex);
+        log.error("Timeout error: {}", ex.getMessage());
         
         ErrorResponse error = ErrorResponse.builder()
                 .status(HttpStatus.GATEWAY_TIMEOUT.value())
-                .message("Request timeout: " + ex.getMessage())
+                .message("Request timeout - transaction service did not respond in time")
                 .path(exchange.getRequest().getPath().value())
                 .timestamp(LocalDateTime.now())
                 .build();
@@ -61,9 +78,11 @@ public class GlobalExceptionHandler {
     }
     
     @ExceptionHandler(WebExchangeBindException.class)
-    public Mono<ResponseEntity<ErrorResponse>> handleValidationException(WebExchangeBindException ex,
-                                                                         ServerWebExchange exchange) {
-        log.error("Validation error", ex);
+    public Mono<ResponseEntity<ErrorResponse>> handleValidationException(
+            WebExchangeBindException ex,
+            ServerWebExchange exchange
+    ) {
+        log.warn("Validation error: {}", ex.getMessage());
         
         StringBuilder errors = new StringBuilder();
         ex.getBindingResult().getFieldErrors().forEach(error ->
@@ -83,13 +102,15 @@ public class GlobalExceptionHandler {
     }
     
     @ExceptionHandler(Exception.class)
-    public Mono<ResponseEntity<ErrorResponse>> handleGenericException(Exception ex,
-                                                                      ServerWebExchange exchange) {
-        log.error("Unexpected error", ex);
+    public Mono<ResponseEntity<ErrorResponse>> handleGenericException(
+            Exception ex,
+            ServerWebExchange exchange
+    ) {
+        log.error("Unexpected error: {}", ex.getMessage(), ex);
         
         ErrorResponse error = ErrorResponse.builder()
                 .status(HttpStatus.INTERNAL_SERVER_ERROR.value())
-                .message("An unexpected error occurred: " + ex.getMessage())
+                .message("An unexpected error occurred")
                 .path(exchange.getRequest().getPath().value())
                 .timestamp(LocalDateTime.now())
                 .build();

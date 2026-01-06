@@ -32,13 +32,13 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
     
-    // Spring Cloud Stream + Kafka Streams
-    implementation 'org.springframework.cloud:spring-cloud-starter-stream-kafka'
-    implementation 'org.apache.kafka:kafka-streams'
+    // Spring Cloud Stream + Kafka Binder
+    implementation 'org.springframework.cloud:spring-cloud-stream'
+    implementation 'org.springframework.cloud:spring-cloud-stream-binder-kafka'
     implementation 'org.springframework.kafka:spring-kafka'
     
-    // Kafka Streams Test Utils
-    testImplementation 'org.apache.kafka:kafka-streams-test-utils'
+    // JSON Processing
+    implementation 'com.fasterxml.jackson.core:jackson-databind'
     
     // Lombok
     compileOnly 'org.projectlombok:lombok'
@@ -49,6 +49,7 @@ dependencies {
     
     // Testing
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'org.springframework.cloud:spring-cloud-stream-test-binder'
     testImplementation 'org.springframework.kafka:spring-kafka-test'
     testImplementation 'org.mockito:mockito-core'
     testImplementation 'org.mockito:mockito-junit-jupiter'

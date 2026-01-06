@@ -5,10 +5,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 /**
  * MS-SP-ANTIFRAUD-RULES
- * Motor de reglas especializadas para detección de fraude
- * 
- * @author Yape Engineering Team
- * @version 1.0.0
+ * @author lmarusic
  */
 @SpringBootApplication
 public class AntiFraudServiceApplication {

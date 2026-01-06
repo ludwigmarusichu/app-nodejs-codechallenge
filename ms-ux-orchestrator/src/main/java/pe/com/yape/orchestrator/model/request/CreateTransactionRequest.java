@@ -28,7 +28,7 @@ public class CreateTransactionRequest {
     private UUID accountExternalIdCredit;
     
     @NotNull(message = "Transfer type ID is required")
-    private Integer tranferTypeId;  // Mantener typo del README
+    private Integer tranferTypeId;
     
     @NotNull(message = "Value is required")
     @DecimalMin(value = "0.01", message = "Value must be greater than zero")

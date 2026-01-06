@@ -35,13 +35,10 @@ public class CreateTransactionUseCaseImpl implements CreateTransactionUseCase {
         log.info("Creating transaction - Debit: {}, Credit: {}, Type: {}, Value: {}",
                 accountExternalIdDebit, accountExternalIdCredit, transferTypeId, value);
         
-        // Validar datos de entrada
         validateInputs(accountExternalIdDebit, accountExternalIdCredit, value);
         
-        // Obtener el tipo de transacción
         TransactionType transactionType = TransactionType.fromId(transferTypeId);
         
-        // Crear transacción en estado PENDING usando factory method
         Transaction transaction = Transaction.createPending(
                 accountExternalIdDebit,
                 accountExternalIdCredit,
@@ -49,13 +46,11 @@ public class CreateTransactionUseCaseImpl implements CreateTransactionUseCase {
                 value
         );
         
-        // Guardar en PostgreSQL
-        // Debezium CDC capturará este INSERT automáticamente desde WAL
-        // y publicará el evento 'transaction.created' a Kafka
         Transaction savedTransaction = transactionRepository.save(transaction);
         
         log.info("Transaction created successfully: {} with status: {}",
                 savedTransaction.transactionExternalId(), savedTransaction.status());
+        log.info("Transaction will be validated asynchronously by antifraud service");
         
         return savedTransaction;
     }
@@ -72,4 +67,3 @@ public class CreateTransactionUseCaseImpl implements CreateTransactionUseCase {
         }
     }
 }
-

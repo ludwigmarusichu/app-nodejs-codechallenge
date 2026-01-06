@@ -2,6 +2,7 @@ package pe.com.yape.orchestrator.service.adapter;
 
 import java.time.Duration;
 import java.util.UUID;
+import java.util.concurrent.TimeoutException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -62,19 +63,30 @@ public class TransactionServiceWebClientAdapter implements TransactionServicePor
                 .uri("/v1/transactions/{id}", transactionExternalId)
                 .retrieve()
                 .onStatus(
+                    status -> status.value() == 404,
+                    clientResponse -> {
+                        log.info("Transaction not found: {}", transactionExternalId);
+                        return Mono.error(new pe.com.yape.orchestrator.application.exception.TransactionNotFoundException(
+                            transactionExternalId));
+                    }
+                )
+                .onStatus(
                     status -> status.is4xxClientError() || status.is5xxServerError(),
                     clientResponse -> clientResponse.bodyToMono(String.class)
                         .flatMap(errorBody -> {
                             log.error("Error from transaction-service: {}", errorBody);
                             return Mono.error(new TransactionServiceException(
-                                "Error retrieving transaction: " + errorBody));
+                                "Error communicating with transaction service: " + errorBody));
                         })
                 )
                 .bodyToMono(TransactionResponse.class)
                 .timeout(Duration.ofMillis(timeout))
-                .doOnError(error -> 
+                .doOnError(TimeoutException.class, error ->
+                    log.error("Timeout getting transaction from transaction-service: {}", 
+                        transactionExternalId))
+                .doOnError(TransactionServiceException.class, error -> 
                     log.error("Failed to get transaction from transaction-service: {}", 
-                        transactionExternalId, error));
+                        transactionExternalId));
     }
 }
 

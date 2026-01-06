@@ -1,9 +1,9 @@
 package pe.com.yape.ms.transaction.model.domain;
 
 /**
- * Tipo de transacción financiera
+ * Tipos de transacciones financiera
  * 
- * @author Yape Engineering Team
+ * @author lmarusic
  * @version 1.0.0
  */
 public enum TransactionType {
@@ -43,13 +43,6 @@ public enum TransactionType {
         return name;
     }
     
-    /**
-     * Obtiene el tipo de transacción por ID
-     * 
-     * @param id identificador del tipo
-     * @return enum correspondiente
-     * @throws IllegalArgumentException si el ID no es válido
-     */
     public static TransactionType fromId(int id) {
         for (TransactionType type : values()) {
             if (type.id == id) {

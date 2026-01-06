@@ -7,8 +7,8 @@ server:
 
 services:
   transaction:
-    base-url: http://localhost:9992
-    timeout: 5000
+    base-url: ${SERVICES_TRANSACTION_BASE_URL:http://localhost:9992}
+    timeout: ${SERVICES_TRANSACTION_TIMEOUT:5000}
 
 management:
   endpoints:

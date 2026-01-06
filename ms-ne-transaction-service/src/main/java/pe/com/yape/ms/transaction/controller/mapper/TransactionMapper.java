@@ -2,13 +2,13 @@ package pe.com.yape.ms.transaction.controller.mapper;
 
 import org.springframework.stereotype.Component;
 import pe.com.yape.ms.transaction.controller.dto.TransactionResponse;
+import pe.com.yape.ms.transaction.controller.dto.TransactionStatusDto;
+import pe.com.yape.ms.transaction.controller.dto.TransactionTypeDto;
 import pe.com.yape.ms.transaction.model.domain.Transaction;
 
 /**
  * Mapper para convertir entre objetos de dominio y DTOs
- * 
  * @author lmarusic
- * @version 1.0.0
  */
 @Component
 public class TransactionMapper {
@@ -19,10 +19,10 @@ public class TransactionMapper {
     public TransactionResponse toResponse(Transaction transaction) {
         return TransactionResponse.builder()
                 .transactionExternalId(transaction.transactionExternalId())
-                .transactionType(TransactionResponse.TransactionTypeDto.builder()
+                .transactionType(TransactionTypeDto.builder()
                         .name(transaction.transactionType().getName())
                         .build())
-                .transactionStatus(TransactionResponse.TransactionStatusDto.builder()
+                .transactionStatus(TransactionStatusDto.builder()
                         .name(transaction.status().getValue())
                         .build())
                 .value(transaction.value())
