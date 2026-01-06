@@ -304,6 +304,41 @@ curl http://localhost:8083/connectors/yape-transaction-connector/status
 docker exec -it yape-kafka kafka-topics --bootstrap-server localhost:9092 --list
 ```
 
+## Probar el Flujo Completo
+
+### 1. Crear una transacción
+```bash
+curl -X POST http://localhost:9991/transaction \
+  -H "Content-Type: application/json" \
+  -d '{
+    "accountExternalIdDebit": "550e1234-e29b-41d4-a716-446655445556",
+    "accountExternalIdCredit": "661f9321-f30c-52e5-b827-557766551111",
+    "tranferTypeId": 1,
+    "value": 1050.50
+  }'
+```
+
+### 2. Consultar estado (transactionExternalId es obtenido de la respuesta de crear transaccion)
+```bash
+curl curl -X GET http://localhost:9991/transaction/{transactionExternalId} \
+     -H "Accept: application/json" \
+     -H "Content-Type: application/json"
+```
+
+### 3. Ver eventos en Kafka
+```bash
+docker exec -it yape-kafka kafka-console-consumer \
+  --bootstrap-server localhost:9092 \
+  --topic yape.public.transactions \
+  --from-beginning
+
+docker exec -it yape-kafka kafka-console-consumer \
+  --bootstrap-server localhost:9092 \
+  --topic transaction.validated \
+  --from-beginning
+```
+
+
 ## Puertos Expuestos
 
 | Servicio | Puerto | URL |
@@ -340,37 +375,7 @@ docker-compose logs -f connect
 docker-compose down -v
 ```
 
-## Probar el Flujo Completo
 
-### 1. Crear una transacción
-```bash
-curl -X POST http://localhost:9991/api/transactions \
-  -H "Content-Type: application/json" \
-  -d '{
-    "accountExternalIdDebit": "acc-001",
-    "accountExternalIdCredit": "acc-002",
-    "tranferTypeId": 1,
-    "value": 500.0
-  }'
-```
-
-### 2. Consultar estado
-```bash
-curl http://localhost:9991/api/transactions/{transactionId}
-```
-
-### 3. Ver eventos en Kafka
-```bash
-docker exec -it yape-kafka kafka-console-consumer \
-  --bootstrap-server localhost:9092 \
-  --topic yape.public.transactions \
-  --from-beginning
-
-docker exec -it yape-kafka kafka-console-consumer \
-  --bootstrap-server localhost:9092 \
-  --topic transaction.validated \
-  --from-beginning
-```
 
 ## Notas Importantes
 
