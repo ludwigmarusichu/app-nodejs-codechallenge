@@ -3,7 +3,12 @@ spring:
     name: ms-ux-orchestrator
 
 server:
-  port: 8080
+  port: 9991
+
+services:
+  transaction:
+    base-url: http://localhost:9992
+    timeout: 5000
 
 management:
   endpoints:
@@ -17,4 +22,5 @@ management:
 logging:
   level:
     pe.com.yape.orchestrator: INFO
+    org.springframework.web.reactive: DEBUG
 

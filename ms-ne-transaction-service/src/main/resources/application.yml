@@ -3,9 +3,9 @@ spring:
     name: ms-ne-transaction-service
 
   datasource:
-    url: jdbc:postgresql://localhost:5432/transactiondb
-    username: yape
-    password: yape123
+    url: jdbc:postgresql://localhost:5432/yape_db
+    username: yape_user
+    password: yape_password
     driver-class-name: org.postgresql.Driver
 
   jpa:
@@ -29,7 +29,7 @@ spring:
     baseline-on-migrate: true
 
 server:
-  port: 8081
+  port: 9992
 
 management:
   endpoints:

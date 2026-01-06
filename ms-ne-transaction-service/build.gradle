@@ -29,21 +29,21 @@ ext {
 }
 
 dependencies {
-    // Spring Boot Starters
+    // Spring Boot
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.springframework.boot:spring-boot-starter-validation'
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
     implementation 'org.springframework.boot:spring-boot-starter-data-redis'
     
-    // Spring Cloud Stream + Kafka
+    // Spring Cloud Stream - Kafka
     implementation 'org.springframework.cloud:spring-cloud-starter-stream-kafka'
     implementation 'org.springframework.kafka:spring-kafka'
     
-    // PostgreSQL
+    // Postgres
     runtimeOnly 'org.postgresql:postgresql'
     
-    // Flyway Migration
+    // Flyway
     implementation 'org.flywaydb:flyway-core'
     implementation 'org.flywaydb:flyway-database-postgresql'
     

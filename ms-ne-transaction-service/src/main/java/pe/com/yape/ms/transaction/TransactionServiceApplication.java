@@ -6,9 +6,8 @@ import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 
 /**
  * MS-NE-TRANSACTION-SERVICE
- * Servicio de negocio core para gestión de transacciones
- * 
- * @author Yape Engineering Team
+ *
+ * @author lmarusic
  * @version 1.0.0
  */
 @SpringBootApplication
